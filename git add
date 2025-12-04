@@ -38,3 +38,21 @@ def parse_parties(html):
 def save_results(parties):
     with open('parties.json', 'w', encoding='utf-8') as f:
         json.dump(parties, f, ensure_ascii=False, indent=2
+try:
+    response = requests.get(url, timeout=10)
+    response.raise_for_status()
+except requests.exceptions.RequestException as e:
+    print(f"Ошибка: {e}")
+    # Можно использовать локальный файл
+    with open('test_page.html', 'r') as f:
+        html = f.read()
+
+# 2. Проверка наличия данных
+if not parties:
+    print("Внимание: не найдено ни одной партии!")
+    print("Проверьте селекторы в коде.")
+
+# 3. Обработка отсутствующих ссылок
+for party in parties:
+    if party['doc_url'] is None:
+        print(f"У партии '{party['name']}' нет документа")
