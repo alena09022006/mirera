@@ -1,0 +1,40 @@
+import requests
+from bs4 import BeautifulSoup
+import json
+
+# 2. Загрузка страницы
+def get_html(url):
+    response = requests.get(url)
+    return response.text
+
+# 3. Парсинг данных
+def parse_parties(html):
+    soup = BeautifulSoup(html, 'html.parser')
+    # ОБЯЗАТЕЛЬНО: найти элементы партий
+    parties = []
+    
+    # ОБЯЗАТЕЛЬНО: для каждой партии
+    for party_element in party_elements:
+        # ФАКТ 1: извлечь название
+        name = party_element.find('h3').text.strip()  # или другой селектор
+        
+        # ФАКТ 2: извлечь ссылку на документ
+        doc_link = party_element.find('a', href=True)
+        doc_url = doc_link['href'] if doc_link else None
+        
+        # ФАКТ 3: обработать ссылку (сделать абсолютной)
+        if doc_url and doc_url.startswith('/'):
+            doc_url = f"https://minjust.gov.ru{doc_url}"
+        
+        # ФАКТ 4: добавить в структуру
+        parties.append({
+            'name': name,
+            'doc_url': doc_url  # может быть None
+        })
+    
+    return parties
+
+# 4. Сохранение результатов
+def save_results(parties):
+    with open('parties.json', 'w', encoding='utf-8') as f:
+        json.dump(parties, f, ensure_ascii=False, indent=2
